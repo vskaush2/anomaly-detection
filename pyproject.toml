@@ -1,0 +1,26 @@
+[project]
+name = "anomaly-detection"
+version = "0.1.0"
+description = "Anomaly detection algorithms for production metric monitoring"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy==2.3.2",
+    "pandas==2.3.1",
+    "scikit-learn==1.7.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "matplotlib==3.10.5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["anomaly_detection"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
