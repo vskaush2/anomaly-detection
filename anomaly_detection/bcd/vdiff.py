@@ -18,6 +18,7 @@ import time
 import logging
 
 import numpy as np
+import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import MinMaxScaler
 
@@ -31,7 +32,8 @@ logger = logging.getLogger('vdiff')
 
 
 class V_DIFF:
-    def __init__(self, eps=0.3, minPts=2, avgMin=20.0, slopeMin=-30.0, giniMax=0.3, win=600):
+    def __init__(self, eps: float = 0.3, minPts: int = 2, avgMin: float = 20.0,
+                 slopeMin: float = -30.0, giniMax: float = 0.3, win: int = 600) -> None:
         """
         Parameters
         ----------
@@ -55,7 +57,7 @@ class V_DIFF:
         self.giniMax = giniMax
         self.win = win
 
-    def detect(self, baseline_ts, new_ts):
+    def detect(self, baseline_ts: pd.Series, new_ts: pd.Series) -> bool:
         """
         Parameters
         ----------
@@ -69,6 +71,11 @@ class V_DIFF:
         bool
             True if a regression is detected.
         """
+        if baseline_ts is not None and not isinstance(baseline_ts, pd.Series):
+            raise TypeError(f"baseline_ts must be a pd.Series, got {type(baseline_ts).__name__}")
+        if new_ts is not None and not isinstance(new_ts, pd.Series):
+            raise TypeError(f"new_ts must be a pd.Series, got {type(new_ts).__name__}")
+
         if self.win < 60:
             logger.info('win parameter is less than 60: %d', self.win)
             return False

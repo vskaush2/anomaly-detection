@@ -1,5 +1,6 @@
 # anomaly_detection
 
+[![Tests](https://github.com/vskaush2/anomaly-detection/actions/workflows/tests.yml/badge.svg)](https://github.com/vskaush2/anomaly-detection/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 Anomaly detection algorithms for production metric monitoring. The core focus is **BCD (Bad Change Detection)** — detecting metric regressions caused by a software deployment, as opposed to organic service load changes or infrastructure events.

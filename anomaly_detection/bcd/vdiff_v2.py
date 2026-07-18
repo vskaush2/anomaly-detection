@@ -29,25 +29,25 @@ logger = logging.getLogger('vdiff_v2')
 class V_DIFF_V2:
     def __init__(
         self,
-        threshold=10.0,
-        avg_min=10.0,
-        correlated_check=True,
-        adaptive_pct=True,
-        suppress_similar_spikes=True,
-        spike_range_multiplier=1.2,
-        baseline_spike_calculation_method='top5_median',
-        baseline_spikiness_gini_threshold=0.4,
-        baseline_variance_cv_threshold=0.45,
-        correlation_ratio_threshold=2.0,
-        concurrent_spike_min=50.0,
-        min_baseline_coverage=0.10,
-        floor_window_high=5,
-        floor_window_low=3,
-        pct_gate_high_cv=0.999,
-        pct_gate_low_cv=0.99,
-        cv_high_threshold=0.8,
-        min_gini_observations=10,
-    ):
+        threshold: float = 10.0,
+        avg_min: float = 10.0,
+        correlated_check: bool = True,
+        adaptive_pct: bool = True,
+        suppress_similar_spikes: bool = True,
+        spike_range_multiplier: float = 1.2,
+        baseline_spike_calculation_method: str = 'top5_median',
+        baseline_spikiness_gini_threshold: float = 0.4,
+        baseline_variance_cv_threshold: float = 0.45,
+        correlation_ratio_threshold: float = 2.0,
+        concurrent_spike_min: float = 50.0,
+        min_baseline_coverage: float = 0.10,
+        floor_window_high: int = 5,
+        floor_window_low: int = 3,
+        pct_gate_high_cv: float = 0.999,
+        pct_gate_low_cv: float = 0.99,
+        cv_high_threshold: float = 0.8,
+        min_gini_observations: int = 10,
+    ) -> None:
         """
         Core parameters
         ---------------
@@ -116,7 +116,7 @@ class V_DIFF_V2:
         self.cv_high_threshold = cv_high_threshold
         self.min_gini_observations = min_gini_observations
 
-    def detect(self, baseline_ts, new_ts):
+    def detect(self, baseline_ts: pd.Series, new_ts: pd.Series) -> bool:
         """
         Parameters
         ----------
@@ -131,6 +131,11 @@ class V_DIFF_V2:
         bool
             True if a regression is detected.
         """
+        if baseline_ts is not None and not isinstance(baseline_ts, pd.Series):
+            raise TypeError(f"baseline_ts must be a pd.Series, got {type(baseline_ts).__name__}")
+        if new_ts is not None and not isinstance(new_ts, pd.Series):
+            raise TypeError(f"new_ts must be a pd.Series, got {type(new_ts).__name__}")
+
         if new_ts is None or len(new_ts) < 1:
             return False
 

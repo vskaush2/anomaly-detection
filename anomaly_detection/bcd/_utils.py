@@ -1,6 +1,8 @@
 """Shared utilities for BCD detectors."""
 
 import numpy as np
+import pandas as pd
+from numpy.typing import ArrayLike
 
 
 class GINI:
@@ -12,11 +14,11 @@ class GINI:
     """
 
     @staticmethod
-    def calc(x):
+    def calc(x: ArrayLike) -> float:
         return 0.5 * np.abs(np.subtract.outer(x, x)).mean() / np.mean(x)
 
     @staticmethod
-    def calc_v2(values, include_zeros=False):
+    def calc_v2(values: ArrayLike, include_zeros: bool = False) -> float:
         """
         Args:
             include_zeros: If True, zeros are included. Use True for spikiness detection
@@ -38,7 +40,7 @@ class GINI:
 
 class SLOPE:
     @staticmethod
-    def calc(x):
+    def calc(x: ArrayLike) -> float:
         """Fit a line to x and return the slope (least squares)."""
         idx = list(range(len(x)))
         coeffs = np.polyfit(idx, x, 1)
@@ -66,11 +68,11 @@ class SpikeBaseline:
         Returns:
             Baseline spike value as a float.
         """
-        def _top_n_median(d, n):
+        def _top_n_median(d: np.ndarray, n: int) -> float:
             top_n = np.sort(d)[-n:] if len(d) >= n else d
             return np.median(top_n)
 
-        def _spike_p90(d):
+        def _spike_p90(d: np.ndarray) -> float:
             spike_threshold = np.percentile(d, 95)
             spike_values = d[d >= spike_threshold]
             if len(spike_values) >= 5:
@@ -96,20 +98,20 @@ class SpikeBaseline:
         return dispatch[method](data)
 
 
-def denoise_mean(x, n=0.3):
+def denoise_mean(x: pd.Series, n: float = 0.3) -> pd.Series:
     """Clip values to within n * mean_absolute_deviation of the mean."""
     mean = np.mean(x)
     diff_mean = np.mean(np.abs(x - mean))
     return np.clip(x, mean - n * diff_mean, mean + n * diff_mean)
 
 
-def denoise_rolling_median(x, win):
+def denoise_rolling_median(x: pd.Series, win: int) -> pd.Series:
     """Smooth a series with a rolling median, forward-filling the warmup window."""
     denoised = x.rolling(win).median()
     return denoised.fillna(denoised.iloc[win])
 
 
-def de_autofill(x):
+def de_autofill(x: pd.Series | None) -> None:
     """
     Remove consecutive duplicate values produced by monitoring system auto-fill.
 
